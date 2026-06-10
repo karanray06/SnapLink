@@ -160,9 +160,9 @@ export default function Home() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: "100%" }}
                     transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                    className="absolute inset-0 z-20 bg-[#0f0f13]/95 backdrop-blur-md p-8 flex flex-col justify-center items-center rounded-xl"
+                    className="absolute inset-0 z-20 bg-[#0f0f13]/95 backdrop-blur-md p-6 sm:p-8 flex flex-col items-center overflow-y-auto rounded-xl"
                   >
-                    <div className="w-full max-w-sm space-y-6 text-center">
+                    <div className="w-full max-w-sm space-y-6 text-center my-auto">
                       <div className="bg-white p-4 rounded-xl inline-block mx-auto">
                         <QRCodeSVG value={result.shortUrl} size={150} />
                       </div>
