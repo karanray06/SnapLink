@@ -14,8 +14,8 @@ export async function GET(
   try {
     const shortId = params.shortId;
 
-    if (!shortId) {
-      return NextResponse.json({ error: "Missing shortId" }, { status: 400 });
+    if (!shortId || shortId === "404") {
+      return new NextResponse("Not Found", { status: 404 });
     }
 
     // 1. Check cache first
@@ -23,11 +23,13 @@ export async function GET(
     if (cached) {
       // Record analytics in background
       recordAnalyticsAsync(request, shortId);
-      const cachedData = JSON.parse(cached as string);
+      
+      // Upstash might return an object directly if it parsed the JSON
+      const cachedData = typeof cached === "string" ? JSON.parse(cached) : cached;
       
       // Check if expired
       if (cachedData.expiresAt && new Date(cachedData.expiresAt) < new Date()) {
-        return NextResponse.redirect(new URL("/404", request.url));
+        return NextResponse.redirect(new URL("/?error=expired", request.url));
       }
       
       return NextResponse.redirect(cachedData.longUrl, 302);
@@ -39,12 +41,12 @@ export async function GET(
     });
 
     if (!urlRecord) {
-      return NextResponse.redirect(new URL("/404", request.url));
+      return NextResponse.redirect(new URL("/?error=not-found", request.url));
     }
 
     // Check if expired
     if (urlRecord.expiresAt && new Date(urlRecord.expiresAt) < new Date()) {
-      return NextResponse.redirect(new URL("/404", request.url));
+      return NextResponse.redirect(new URL("/?error=expired", request.url));
     }
 
     // 3. Cache the URL
@@ -60,7 +62,7 @@ export async function GET(
     return NextResponse.redirect(urlRecord.longUrl, 302);
   } catch (error) {
     console.error("[redirect]", error);
-    return NextResponse.redirect(new URL("/404", request.url));
+    return NextResponse.redirect(new URL("/?error=server-error", request.url));
   }
 }
 
