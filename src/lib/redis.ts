@@ -27,7 +27,8 @@ export async function checkRateLimit(
   const count = (results[1] as number) + 1;
 
   if (count > limit) {
-    const resetAt = (await redis.zrange(key, 0, 0, { withScores: true }))[0]?.score || now;
+    const oldestEntries = await redis.zrange(key, 0, 0, { withScores: true }) as any[];
+    const resetAt = oldestEntries.length >= 2 ? (oldestEntries[1] as number) : now;
     return {
       allowed: false,
       remaining: 0,

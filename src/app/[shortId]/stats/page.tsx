@@ -223,7 +223,7 @@ export default function StatsPage() {
   );
 }
 
-function MetricCard({ icon: Icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function MetricCard({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: string }) {
   return (
     <motion.div
       whileHover={{ y: -5 }}
