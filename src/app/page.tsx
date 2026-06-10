@@ -82,117 +82,125 @@ export default function Home() {
         >
           <Card className="p-1 bg-white/5 border-white/10 backdrop-blur-xl shadow-2xl rounded-2xl overflow-hidden">
             <div className="bg-[#0f0f13] rounded-xl p-6 md:p-8 relative overflow-hidden">
-              <form onSubmit={handleSubmit} className="relative z-10 flex flex-col gap-5">
-                
-                <div className="space-y-2">
-                  <Label htmlFor="longUrl" className="text-slate-300">Long URL</Label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Link2 className="h-5 w-5 text-slate-500" />
-                    </div>
-                    <Input
-                      id="longUrl"
-                      type="url"
-                      placeholder="https://your-very-long-url.com/some/path"
-                      required
-                      value={longUrl}
-                      onChange={(e) => setLongUrl(e.target.value)}
-                      className="pl-10 bg-black/40 border-slate-800 text-white placeholder:text-slate-600 focus-visible:ring-[#6C63FF] h-12"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="customAlias" className="text-slate-300">Custom Alias (Optional)</Label>
-                    <Input
-                      id="customAlias"
-                      type="text"
-                      placeholder="e.g. my-campaign"
-                      value={customAlias}
-                      onChange={(e) => setCustomAlias(e.target.value)}
-                      className="bg-black/40 border-slate-800 text-white placeholder:text-slate-600 focus-visible:ring-[#6C63FF]"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="expiresAt" className="text-slate-300">Expiry Date (Optional)</Label>
-                    <Input
-                      id="expiresAt"
-                      type="datetime-local"
-                      value={expiresAt}
-                      onChange={(e) => setExpiresAt(e.target.value)}
-                      className="bg-black/40 border-slate-800 text-white focus-visible:ring-[#6C63FF] color-scheme-dark"
-                      style={{ colorScheme: 'dark' }}
-                    />
-                  </div>
-                </div>
-
-                {error && (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 text-sm bg-red-950/30 p-3 rounded-lg border border-red-900/50">
-                    {error}
-                  </motion.div>
-                )}
-
-                <Button 
-                  type="submit" 
-                  disabled={loading || !longUrl}
-                  className="w-full h-12 mt-2 bg-gradient-to-r from-[#6C63FF] to-[#FF6584] hover:opacity-90 text-white font-medium text-lg transition-all"
-                >
-                  {loading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Shortening...</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <span>Shorten It</span>
-                      <ArrowRight className="w-5 h-5" />
-                    </div>
-                  )}
-                </Button>
-              </form>
-
-              {/* Result Overlay */}
-              <AnimatePresence>
-                {result && (
-                  <motion.div
-                    initial={{ opacity: 0, y: "100%" }}
+              <AnimatePresence mode="wait">
+                {!result ? (
+                  <motion.form 
+                    key="form"
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: "100%" }}
-                    transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                    className="absolute inset-0 z-20 bg-[#0f0f13]/95 backdrop-blur-md p-6 sm:p-8 flex flex-col items-center overflow-y-auto rounded-xl"
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    onSubmit={handleSubmit} 
+                    className="relative z-10 flex flex-col gap-5"
                   >
-                    <div className="w-full max-w-sm space-y-6 text-center my-auto">
-                      <div className="bg-white p-4 rounded-xl inline-block mx-auto">
-                        <QRCodeSVG value={result.shortUrl} size={150} />
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="longUrl" className="text-slate-300">Long URL</Label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <Link2 className="h-5 w-5 text-slate-500" />
+                        </div>
+                        <Input
+                          id="longUrl"
+                          type="url"
+                          placeholder="https://your-very-long-url.com/some/path"
+                          required
+                          value={longUrl}
+                          onChange={(e) => setLongUrl(e.target.value)}
+                          className="pl-10 bg-black/40 border-slate-800 text-white placeholder:text-slate-600 focus-visible:ring-[#6C63FF] h-12"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="customAlias" className="text-slate-300">Custom Alias (Optional)</Label>
+                        <Input
+                          id="customAlias"
+                          type="text"
+                          placeholder="e.g. my-campaign"
+                          value={customAlias}
+                          onChange={(e) => setCustomAlias(e.target.value)}
+                          className="bg-black/40 border-slate-800 text-white placeholder:text-slate-600 focus-visible:ring-[#6C63FF]"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="expiresAt" className="text-slate-300">Expiry Date (Optional)</Label>
+                        <Input
+                          id="expiresAt"
+                          type="datetime-local"
+                          value={expiresAt}
+                          onChange={(e) => setExpiresAt(e.target.value)}
+                          className="bg-black/40 border-slate-800 text-white focus-visible:ring-[#6C63FF] color-scheme-dark"
+                          style={{ colorScheme: 'dark' }}
+                        />
+                      </div>
+                    </div>
+
+                    {error && (
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 text-sm bg-red-950/30 p-3 rounded-lg border border-red-900/50">
+                        {error}
+                      </motion.div>
+                    )}
+
+                    <Button 
+                      type="submit" 
+                      disabled={loading || !longUrl}
+                      className="w-full h-12 mt-2 bg-gradient-to-r from-[#6C63FF] to-[#FF6584] hover:opacity-90 text-white font-medium text-lg transition-all"
+                    >
+                      {loading ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Shortening...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <span>Shorten It</span>
+                          <ArrowRight className="w-5 h-5" />
+                        </div>
+                      )}
+                    </Button>
+                  </motion.form>
+                ) : (
+                  <motion.div
+                    key="result"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                    className="flex flex-col justify-center items-center py-4"
+                  >
+                    <div className="w-full max-w-sm space-y-8 text-center">
+                      <div className="bg-white p-4 rounded-xl inline-block mx-auto shadow-lg">
+                        <QRCodeSVG value={result.shortUrl} size={180} />
                       </div>
                       
-                      <div className="space-y-2">
-                        <p className="text-sm text-slate-400">Your short link is ready!</p>
+                      <div className="space-y-3">
+                        <p className="text-sm text-slate-400 font-medium">Your short link is ready to share!</p>
                         <div className="flex items-center gap-2 bg-black/50 border border-slate-800 p-2 rounded-lg">
                           <Input 
                             readOnly 
                             value={result.shortUrl} 
-                            className="border-none bg-transparent focus-visible:ring-0 text-[#00D4FF] font-medium"
+                            className="border-none bg-transparent focus-visible:ring-0 text-[#00D4FF] font-medium text-lg h-10"
                           />
                           <Button 
                             variant="secondary" 
                             size="icon" 
                             onClick={copyToClipboard}
-                            className="shrink-0 bg-white/10 hover:bg-white/20 text-white"
+                            className="shrink-0 bg-[#6C63FF]/20 hover:bg-[#6C63FF]/40 text-[#6C63FF] border-none h-10 w-10"
                           >
-                            {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                            {copied ? <Check className="w-5 h-5 text-green-400" /> : <Copy className="w-5 h-5" />}
                           </Button>
                         </div>
                       </div>
 
-                      <div className="flex gap-3 justify-center pt-2">
-                        <Button variant="outline" className="border-slate-700 bg-transparent hover:bg-white/5" onClick={() => setResult(null)}>
+                      <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4 border-t border-slate-800/50">
+                        <Button variant="outline" className="border-slate-700 bg-transparent hover:bg-white/5 w-full sm:w-auto" onClick={() => setResult(null)}>
                           Shorten Another
                         </Button>
-                        <Button variant="outline" className="border-slate-700 bg-transparent hover:bg-white/5" asChild>
+                        <Button variant="outline" className="border-slate-700 bg-[#6C63FF]/10 hover:bg-[#6C63FF]/20 text-[#6C63FF] w-full sm:w-auto" asChild>
                           <a href={`/${result.shortId}/stats`} target="_blank" rel="noreferrer">
-                            View Stats
+                            View Analytics
                           </a>
                         </Button>
                       </div>
